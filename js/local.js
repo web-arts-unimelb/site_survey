@@ -3,7 +3,7 @@ jQuery(document).ready(function() {
 	jQuery.support.cors = true;
 
 	// Insert html
-	jQuery(output_survey()).insertAfter("div#content-wrapper");
+	jQuery(output_survey_1()).insertAfter("div#content-wrapper");
 
 	// Call dialog
   jQuery(".site_survey").dialog({
@@ -87,6 +87,20 @@ jQuery(document).ready(function() {
 });
 
 
+/*
+NOTE: to clean the cookie in console, paste the following code
+to console
+
+function deleteCookie(c_name)
+{
+  document.cookie = c_name +'=; expires=Thu, 01-Jan-70 00:00:01 GMT;';
+}
+
+deleteCookie('site_survey_cookie');
+
+*/
+
+
 function setCookie(c_name, value, expiredays)
 {
 	var exdate = new Date();
@@ -130,6 +144,7 @@ function deleteCookie(c_name)
 	document.cookie = c_name +'=; expires=Thu, 01-Jan-70 00:00:01 GMT;';
 }
 
+// Old survey template, unused.
 function output_survey()
 {
 	var output = '<div class="site_survey_container">\
@@ -155,11 +170,43 @@ function output_survey()
 	return output;
 }
 
+
+// Another template
+function output_survey_1()
+{
+  var output = '<div class="site_survey_container">\
+    <div class="site_survey" title="Survey">\
+      <p class="site_survey_denied"><a href="#">No, thanks</a></p>\
+      <form class="popup_site_survey" name="popup_site_survey" method="post">\
+        <p>We want to build a better website and learn more about you. Are you a:</p>\
+        <input type="radio" name="visitor_type" value="Current undergraduate student" />Current undergraduate student<br />\
+        <input type="radio" name="visitor_type" value="Current graduate student" />Current graduate student<br />\
+        <input type="radio" name="visitor_type" value="Prospective undergraduate student" />Prospective undergraduate student<br />\
+        <input type="radio" name="visitor_type" value="Prospective graduate student" />Prospective graduate student<br />\
+        <input type="radio" name="visitor_type" value="Academic/researcher (University of Melbourne)" />Academic/researcher (University of Melbourne)<br />\
+        <input type="radio" name="visitor_type" value="Academic/researcher (NON - University of Melbourne)" />Academic/researcher (NON - University of Melbourne)<br />\
+				<input type="radio" name="visitor_type" value="Alumnus" />Alumnus<br />\
+        <input type="radio" name="visitor_type" value="Professional staff (University of Melbourne)" />Professional staff (University of Melbourne)<br />\
+				<input type="radio" name="visitor_type" value="Industry or research partner" />Industry or research partner<br /><br />\
+        <input type="radio" name="visitor_type" value="Other" />Other (please specify) <input type="text" name="other_visitor_type" value="" /><br />';
+
+  output = output + '<input type="hidden" name="url" value="' + document.URL + '"/>';
+  output = output + '<input type="hidden" name="ip" value=""/>';
+  output = output + '</form><div class="site_survey_error_message"></div></div></div>';
+
+  return output;
+}
+
+
 function assign_visitor_ip()
 {
-	jQuery.getJSON("http://smart-ip.net/geoip-json?callback=?",
+	//var url = "http://smart-ip.net/geoip-json?callback=?" // Not working??
+	var url = "http://api.ipify.org?format=json";
+	jQuery.getJSON(url,
   	function(data){
-    	jQuery("input[name='ip']").attr("value", data.host);
+    	jQuery("input[name='ip']").attr("value", data.ip);
+			//test
+			//console.log("test ip: " + data.ip);
     }
   );
 }
