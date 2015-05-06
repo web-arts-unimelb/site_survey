@@ -15,7 +15,9 @@ jQuery(document).ready(function() {
 		buttons: {
 			Submit: function(){
 				var post_url = "http://arts.unimelb.edu.au/sites/arts.unimelb.edu.au/forms/site_survey/process_site_survey.php";
-			
+				// csv result here:
+				// http://arts.unimelb.edu.au/sites/arts.unimelb.edu.au/forms/site_survey/csv.php		
+	
 				if(
 					jQuery("input[name='visitor_type']:checked").val() === undefined &&
 					jQuery("input[name='other_visitor_type']").val() === ''
