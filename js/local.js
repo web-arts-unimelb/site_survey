@@ -7,55 +7,15 @@
 
 				// Insert html
 				jQuery(output_survey_1()).insertAfter("div#content-wrapper");
-
-				// Call dialog
-				jQuery(".site_survey").dialog({
-					bgiframe: true,
-					modal: true,
-					width: 500,
-					resizable: false,
-					autoOpen: true,
-					buttons: {
-						Submit: function(){
-							var post_url = "http://arts.unimelb.edu.au/sites/arts.unimelb.edu.au/forms/site_survey/process_site_survey.php";
-							// csv result here:
-							// http://arts.unimelb.edu.au/sites/arts.unimelb.edu.au/forms/site_survey/csv.php		
-	
-							if(
-								jQuery("input[name='visitor_type']:checked").val() === undefined &&
-								jQuery("input[name='other_visitor_type']").val() === ''
-							)
-							{
-								$("div.site_survey_error_message").html("<p>Please select an option</p>");		
-							}
-							else
-							{
-								setCookie('site_survey_cookie', 'site_survey_cookie', 30);
-					
-								jQuery.ajax({
-									crossDomain: true,
-									cache: false,
-									url: post_url,
-									data: $(".popup_site_survey").serialize(),
-									dataType: 'jsonp',
-									type: "POST",
-									success:function(data){
-										//alert("Good");
-										if (window.console) {
-											console.log(data);
-										}	
-									},
-									error: function(jqXHR, textStatus, ex) {
-						  			alert("Test: " + textStatus + "," + ex + "," + jqXHR.responseText);
-									}
-								});
-					
-								// Force to close
-								jQuery('.site_survey').dialog('close');
-							}
-						}
-					}
-				});
+				
+				// Initial
+				responsive_func();
+		
+				// Resize
+				// http://stackoverflow.com/questions/23996726/will-window-resize-fire-on-orientation-change
+				window.addEventListener("orientationchange", function() {
+    			responsive_func();
+				}, false);
 		
 				jQuery('p.site_survey_denied a').click(function() {
 					setCookie('site_survey_cookie','site_survey_cookie',30);
@@ -91,6 +51,71 @@
 				assign_visitor_ip();	
 			});
 			
+		}
+	}
+	
+	function responsive_func() {
+		var dialog_width = 0;
+		var fix_margin = 10;
+		width = jQuery(window).width();
+		
+		if(width <= 480) {
+			dialog_width = width - 2*fix_margin;
+		}
+		else {
+			dialog_width = 500;
+		}
+		
+		// Call dialog
+		// http://stackoverflow.com/questions/744554/jquery-ui-dialog-positioning
+		jQuery(".site_survey").dialog({
+			bgiframe: true,
+			modal: true,
+			width: dialog_width,
+			resizable: false,
+			autoOpen: true,
+			buttons: {
+				Submit: my_submit
+			}
+		}).dialog('widget').position({ my: 'top', at: 'center', of: jQuery('#content-wrapper') });
+	}
+	
+	function my_submit() {
+		var post_url = "http://arts.unimelb.edu.au/sites/arts.unimelb.edu.au/forms/site_survey/process_site_survey.php";
+		// csv result here:
+		// http://arts.unimelb.edu.au/sites/arts.unimelb.edu.au/forms/site_survey/csv.php		
+
+		if(
+			jQuery("input[name='visitor_type']:checked").val() === undefined &&
+			jQuery("input[name='other_visitor_type']").val() === ''
+		)
+		{
+			$("div.site_survey_error_message").html("<p>Please select an option</p>");		
+		}
+		else
+		{
+			setCookie('site_survey_cookie', 'site_survey_cookie', 30);
+
+			jQuery.ajax({
+				crossDomain: true,
+				cache: false,
+				url: post_url,
+				data: $(".popup_site_survey").serialize(),
+				dataType: 'jsonp',
+				type: "POST",
+				success:function(data){
+					//alert("Good");
+					if (window.console) {
+						console.log(data);
+					}	
+				},
+				error: function(jqXHR, textStatus, ex) {
+	  			alert("Test: " + textStatus + "," + ex + "," + jqXHR.responseText);
+				}
+			});
+
+			// Force to close
+			jQuery('.site_survey').dialog('close');
 		}
 	}
 	
